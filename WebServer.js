@@ -1,4 +1,9 @@
 
+/*
+Сервер принимает запрос вида:
+http://localhost:3000/hash?firstname=Name&lastname=Lastname
+ */
+
 const server = require('http').createServer();
 const getHash = require('./GetHash');
 const url = require('url');
