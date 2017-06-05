@@ -5,25 +5,30 @@ const url = require('url');
 
 const port = process.env.POR || 3000;
 
+// Обработка запроса
 function handler(req, res) {
+
+    // Получаем параметры get запроса
     let urlParams = url.parse(req.url, true).query;
 
+    // Проверяем наличие параметров
     if(urlParams.firstname && urlParams.lastname) {
-        res.writeHead(200, 'OK', {'Content-Type': 'application/json'});
+        // Параметры переданы. Получаем secretKey
         getHash(urlParams.firstname, urlParams.lastname)
             .then(hash => {
-
+                // Получили secretKey. Готовим ответ
                 let jsonData = JSON.stringify({
                     firstName: urlParams.firstname,
                     lastName: urlParams.lastname,
                     secretKey: hash
                 });
-                res.write(jsonData)
+                res.writeHead(200, 'OK', {'Content-Type': 'application/json'});
+                res.write(jsonData);
+                res.end();
             })
-            .then(() =>  res.end())
             .catch(err => {
                 res.writeHead(500, 'Internal Server Error', {'Content-Type': 'text/plain;charset=utf-8'});
-                res.write("Ошбика обработки запроса");
+                res.write("Ошибка обработки запроса:" + err);
                 res.end();
             })
     }
@@ -35,7 +40,6 @@ function handler(req, res) {
 
 
 }
-
 
 server.on('error', err => console.error(err));
 server.on('request', handler);
